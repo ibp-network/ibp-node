@@ -36,7 +36,7 @@ pub struct MemberService {
     member_id: u32,
     id: u32,
     name: BoundedVec<u8, ConstU32<64>>,
-    ip4_address: BoundedVec<u8, ConstU32<15>>,
+    address: BoundedVec<u8, ConstU32<128>>,
     port: u16,
 }
 
@@ -207,7 +207,7 @@ pub mod pallet {
 			origin: OriginFor<T>,
 	        service_id: u32,
             name: BoundedVec<u8, ConstU32<64>>,
-            ip4_address: BoundedVec<u8, ConstU32<15>>,
+            address: BoundedVec<u8, ConstU32<128>>,
             port: u16,
 		) -> DispatchResult {
             let sender = ensure_signed(origin)?;
@@ -223,7 +223,7 @@ pub mod pallet {
 				Error::<T>::MemberServiceAlreadyRegistered,
 			);
             ensure!(
-				!ip4_address.is_empty(),
+				!address.is_empty(),
 				Error::<T>::InvalidIP4Address,
 			);
             let member_service = MemberService {
@@ -231,7 +231,7 @@ pub mod pallet {
                 member_id: member.id,
                 id,
                 name: name.clone(),
-                ip4_address: ip4_address.clone(),
+                address: address.clone(),
                 port,
             };
 			MemberServices::<T>::insert(&id, member_service);
@@ -257,30 +257,6 @@ pub mod pallet {
 			Self::deposit_event(Event::MonitorRegistered { who: sender, name });
 			Ok(())
 		}
-
-        /*
-		#[pallet::call_index(2)]
-        #[pallet::weight(T::WeightInfo::dummy_weight())]
-		pub fn remove_monitor(origin: OriginFor<T>) -> DispatchResult {
-			let sender = ensure_signed(origin)?;
-			let monitor_id = Monitors::<T>::get(&sender).ok_or(Error::<T>::NoSuchMonitor)?;
-			Monitors::<T>::remove(&sender);
-			Self::deposit_event(Event::MonitorRemoved { who: sender, id: monitor_id });
-			Ok(())
-		}
-        */
-
-        /*
-		#[pallet::call_index(4)]
-        #[pallet::weight(T::WeightInfo::dummy_weight())]
-		pub fn remove_service(origin: OriginFor<T>, service_index: u32) -> DispatchResult {
-			let sender = ensure_signed(origin)?;
-			// let service_id = Services::<T>::get(&service_index).ok_or(Error::<T>::NoSuchService)?;
-			Services::<T>::remove(&service_index);
-			Self::deposit_event(Event::ServiceRemoved { who: sender, index: service_index });
-			Ok(())
-		}
-        */
 
 		#[pallet::call_index(4)]
         #[pallet::weight(T::WeightInfo::dummy_weight())]
