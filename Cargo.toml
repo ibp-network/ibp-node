@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "node",
-    "pallets/template",
+    "pallets/pallet-ibp",
     "runtime",
 ]
 [profile.release]
