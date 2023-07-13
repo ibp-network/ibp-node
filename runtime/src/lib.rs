@@ -267,10 +267,16 @@ impl pallet_sudo::Config for Runtime {
 	type RuntimeCall = RuntimeCall;
 }
 
+parameter_types! {
+	pub HealthCheckReward: u32 = 1_000;
+}
+
 /// Configure the pallet-ibp in pallets/ibp.
 impl pallet_ibp::Config for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type WeightInfo = pallet_ibp::weights::SubstrateWeight<Runtime>;
+	type HealthCheckReward = HealthCheckReward;
+	type Currency = Balances;
 }
 
 // Create the runtime by composing the FRAME pallets that were previously configured.
