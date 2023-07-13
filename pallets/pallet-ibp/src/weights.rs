@@ -7,12 +7,16 @@ use core::marker::PhantomData;
 
 /// Dummy weight function needed for pallet_ibp.
 pub trait WeightInfo {
+    fn zero_weight() -> Weight;
 	fn dummy_weight() -> Weight;
 }
 
 /// Weights for pallet_ibp using the Substrate node and recommended hardware.
 pub struct SubstrateWeight<T>(PhantomData<T>);
 impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
+    fn zero_weight() -> Weight {
+        Weight::from_parts(0, 0)
+    }
 	/// Storage: TemplateModule Something (r:0 w:1)
 	/// Proof: TemplateModule Something (max_values: Some(1), max_size: Some(4), added: 499, mode: MaxEncodedLen)
 	fn dummy_weight() -> Weight {
@@ -27,6 +31,9 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 
 // For backwards compatibility and tests
 impl WeightInfo for () {
+    fn zero_weight() -> Weight {
+        Weight::from_parts(0, 0)
+    }
 	/// Storage: TemplateModule Something (r:0 w:1)
 	/// Proof: TemplateModule Something (max_values: Some(1), max_size: Some(4), added: 499, mode: MaxEncodedLen)
 	fn dummy_weight() -> Weight {

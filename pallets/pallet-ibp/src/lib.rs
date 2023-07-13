@@ -234,12 +234,13 @@ pub mod pallet {
 		#[pallet::weight(T::WeightInfo::dummy_weight())]
 		pub fn register_monitor(
 			origin: OriginFor<T>,
+			monitor: T::AccountId,
 			name: BoundedVec<u8, ConstU32<32>>,
 		) -> DispatchResult {
 			let sender = ensure_signed(origin)?;
 			ensure!(Members::<T>::contains_key(&sender), Error::<T>::MemberNotFound);
-			ensure!(!Monitors::<T>::contains_key(&sender), Error::<T>::MonitorAlreadyRegistered);
-			Monitors::<T>::insert(&sender, name.clone());
+			ensure!(!Monitors::<T>::contains_key(&monitor), Error::<T>::MonitorAlreadyRegistered);
+			Monitors::<T>::insert(&monitor, name.clone());
 			Self::deposit_event(Event::MonitorRegistered { who: sender, name });
 			Ok(())
 		}
@@ -276,7 +277,7 @@ pub mod pallet {
 		}
 
 		#[pallet::call_index(5)]
-		#[pallet::weight(T::WeightInfo::dummy_weight())]
+		#[pallet::weight(T::WeightInfo::zero_weight())]
 		pub fn mint(origin: OriginFor<T>) -> DispatchResult {
 			let sender = ensure_signed(origin)?;
 			let reward: BalanceOf<T> = T::HealthCheckReward::get().into();

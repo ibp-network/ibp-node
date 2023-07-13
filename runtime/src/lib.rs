@@ -268,7 +268,7 @@ impl pallet_sudo::Config for Runtime {
 }
 
 parameter_types! {
-	pub HealthCheckReward: u32 = 1_000;
+	pub HealthCheckReward: u32 = 100_000_000_000;
 }
 
 /// Configure the pallet-ibp in pallets/ibp.
