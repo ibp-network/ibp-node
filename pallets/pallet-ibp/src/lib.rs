@@ -4,6 +4,7 @@ use frame_support::RuntimeDebug;
 // Re-export pallet items so that they can be accessed from the crate namespace.
 use frame_support::{
 	pallet_prelude::*,
+	sp_runtime::SaturatedConversion,
 	traits::{Currency, ReservableCurrency},
 };
 use frame_system::pallet_prelude::*;
@@ -69,7 +70,7 @@ pub mod pallet {
 		type WeightInfo: WeightInfo;
 		type Currency: ReservableCurrency<Self::AccountId>;
 		#[pallet::constant]
-		type HealthCheckReward: Get<u32>;
+		type HealthCheckReward: Get<u64>;
 	}
 
 	#[pallet::event]
@@ -267,7 +268,7 @@ pub mod pallet {
 				HealthCheck { member_service_id, timestamp, status, response_time_ms };
 			service_health_checks.try_push(health_check).unwrap();
 			HealthChecks::<T>::set(&member_service_id, &sender, Some(service_health_checks));
-			let reward: BalanceOf<T> = T::HealthCheckReward::get().into();
+			let reward: BalanceOf<T> = T::HealthCheckReward::get().saturated_into::<BalanceOf<T>>();
 			T::Currency::deposit_creating(&sender, reward);
 			Self::deposit_event(Event::HealthCheckSubmitted {
 				member_service_name: member_service.name.clone(),
@@ -280,7 +281,7 @@ pub mod pallet {
 		#[pallet::weight(T::WeightInfo::zero_weight())]
 		pub fn mint(origin: OriginFor<T>) -> DispatchResult {
 			let sender = ensure_signed(origin)?;
-			let reward: BalanceOf<T> = T::HealthCheckReward::get().into();
+			let reward: BalanceOf<T> = T::HealthCheckReward::get().saturated_into::<BalanceOf<T>>();
 			T::Currency::deposit_creating(&sender, reward);
 			Ok(())
 		}
